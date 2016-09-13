@@ -13,6 +13,16 @@ window.performance.mark('mark_fully_visible');
 window.performance.mark('mark_above_the_fold');
 var WindowEvent;(function(n){n[n.Load="load"]="Load";n[n.BeforeUnload="beforeunload"]="BeforeUnload";n[n.Abort="abort"]="Abort";n[n.Error="error"]="Error"})(WindowEvent||(WindowEvent={}));var AjaxTiming=function(){function n(n,t,i,r){var u=this;this.getPerformanceTimings=function(){var i,f,t,r,e,n;if(typeof performance=="object"&&typeof performance.getEntries=="function"&&(i=performance.getEntries(),f=Array.isArray||function(n){return Object.prototype.toString.call(n)=="[object Array]"},f(i)))for(t=0,r=i;t<r.length;t++)if(e=r[t],n=e,n.name==u.url){u.connect=n.connectEnd-n.connectStart;u.dns=n.domainLookupEnd-n.domainLookupStart;u.duration=n.duration;u.load=n.responseEnd-n.requestStart;u.start=n.startTime;break}};this.url=n;this.method=t;this.isAsync=i;this.open=r}return n}(),ProfilerJsError=function(){function n(n,t,i){this.count=0;this.message=n;this.url=t;this.lineNumber=i}return n.createText=function(n,t,i){return[n,t,i].join(":")},n.prototype.getText=function(){return n.createText(this.message,this.url,this.lineNumber)},n}(),ProfilerEventManager=function(){function n(){this.events=[];this.hasAttachEvent=typeof attachEvent=="function"}return n.prototype.add=function(n,t,i){this.events.push({type:n,target:t,func:i});this.hasAttachEvent?t.attachEvent("on"+n,i):t.addEventListener(n,i,!1)},n.prototype.clear=function(){for(var n,t=0,i=this.events;t<i.length;t++)n=i[t],this.hasAttachEvent?n.target.detachEvent(n.type,n.func):n.target.removeEventListener(n.type,n.func,!1);this.events=[]},n}(),RProfiler=function(){function n(){var n=this,u,f,t,i,e;if(this.restUrl="cpqa.catchpoint.com/jp/372/v3/M",this.startTime=(new Date).getTime(),this.info={},this.hasInsight=!1,this.data={start:this.startTime,jsCount:0,jsErrors:[],loadTime:-1,loadFired:!1,ajax:[]},this.eventManager=new ProfilerEventManager,this.startAjaxCapture=function(){var i=XMLHttpRequest.prototype,f=i.open,e=i.send,r=n.data.ajax,u=typeof performance=="object"&&typeof window.performance.now=="function",t;u&&window.performance.setResourceTimingBufferSize(300);t=function(){return u?window.performance.now():(new Date).getTime()};i.open=function(n,i,u,e,o){u===void 0&&(u=!0);this.rpIndex=r.length;r.push(new AjaxTiming(i,n,u,t()));f.call(this,n,i,u,e,o)};i.send=function(n){var i=this,f=this.onreadystatechange,u;(this.onreadystatechange=function(){var n=r[i.rpIndex],u;if(n){u=i.readyState;switch(u){case 1:n.connectionEstablished=t();break;case 2:n.requestReceived=t();break;case 3:n.processingTime=t();break;case 4:n.complete=t();n.responseSize=i.responseText.length;n.getPerformanceTimings()}typeof f=="function"&&f.call(i)}},u=r[this.rpIndex],u)&&(n&&!isNaN(n.length)&&(u.sendSize=n.length),u.send=t(),e.call(this,n))}},this.recordPageLoad=function(){n.data.loadTime=(new Date).getTime();n.data.loadFired=!0},this.addError=function(t,i,r){var s,f,u,e,o;for(n.data.jsCount++,s=ProfilerJsError.createText(t,i,r),f=n.data.jsErrors,u=0,e=f;u<e.length;u++)if(o=e[u],o.getText()==s){o.count++;return}f.push(new ProfilerJsError(t,i,r))},this.addInfo=function(t,i,r){if(!n.isNullOrEmpty(t)){if(n.isNullOrEmpty(r))n.info[t]=i;else{if(n.isNullOrEmpty(i))return;n.isNullOrEmpty(n.info[t])&&(n.info[t]={});n.info[t][i]=r}n.hasInsight=!0}},this.clearInfo=function(){n.info={};n.hasInsight=!1},this.getInfo=function(){return n.hasInsight?n.info:null},this.eventManager.add(WindowEvent.Load,window,this.recordPageLoad),u=this.addError,this.startAjaxCapture(),!window.opera)"onerror"in window&&(f=window.onerror,window.onerror=function(n,t,i){return(u(n,t,i),!!f)?f(n,t,i):!1});else{function s(n){var t=n.target||n.srcElement;return t.nodeType==3&&(t=t.parentNode),u("N/A",t.src||t.URL,-1),!1}this.eventManager.add(WindowEvent.Error,document,s)}!window.__cpCdnPath||(this.restUrl=window.__cpCdnPath.trim());t=document.createElement("iframe");i=t.style;i.position="absolute";i.top="-10000px";i.left="-1000px";e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(t,e);var o=t.contentWindow.document.open("text/html","replace"),h=window.location.protocol+"//",r='<body onload="';r+="function s(u){var d=document,s=d.createElement('script');s.type='text/javascript';s.src=u;d.body.appendChild(s);}";r+="s('"+h+this.restUrl+"');";r+='"><\/body>';o.write(r);o.close()}return n.prototype.isNullOrEmpty=function(n){if(n===undefined||n===null)return!0;if(typeof n=="string"){var t=n;return t.trim().length==0}return!1},n}(),profiler=new RProfiler;window.RProfiler=profiler;window.WindowEvent=WindowEvent;
 </script>
+</head>
+<body onload="markFullyLoaded()">
+<h1>Testing Site</h1>
+<!-- page group -->
+<div id="container" class=""></div>
+<script type="text/javascript">
+	var pageNameArray = ['home', 'product', 'confirmation'];
+	var pageName = pageNameArray[Math.floor(Math.random() * pageNameArray.length)];
+	document.getElementById("container").className = pageName;
+</script>
 <!-- ads -->
 <div id="advertisement" style="background-color:white;display:none;"><p>Advertisement</p></div>
 <script src="ad.js"></script>
@@ -99,12 +109,10 @@ document.getElementById("server").innerHTML = serverName;
 document.getElementById("host").innerHTML = hostName;
 document.getElementById("serverTime").innerHTML = serverTime;
 document.getElementById("version").innerHTML = version;
-
 function markFullyLoaded() {
     window.performance.mark('mark_fully_loaded');
     perfMarks = window.performance.getEntriesByType('mark');
 }
 </script>
-
 </body>
 </html>
